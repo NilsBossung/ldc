@@ -39,7 +39,7 @@ Macros defined by the compiler, not the code:
         __APPLE__       Mac OSX
         __FreeBSD__     FreeBSD
         __OpenBSD__     OpenBSD
-        __sun&&__SVR4   Solaris, OpenSolaris (yes, both macros are necessary)
+        __sun           Solaris, OpenSolaris, SunOS, OpenIndiana, etc
 
 For the target systems, there are the target operating system and
 the target object file format:
@@ -493,6 +493,7 @@ enum DYNCAST
     DYNCAST_TYPE,
     DYNCAST_IDENTIFIER,
     DYNCAST_TUPLE,
+    DYNCAST_PARAMETER,
 };
 
 enum MATCH
@@ -509,11 +510,14 @@ typedef uint64_t StorageClass;
 
 
 void warning(Loc loc, const char *format, ...) IS_PRINTF(2);
+void deprecation(Loc loc, const char *format, ...) IS_PRINTF(2);
 void error(Loc loc, const char *format, ...) IS_PRINTF(2);
 void errorSupplemental(Loc loc, const char *format, ...);
-void verror(Loc loc, const char *format, va_list ap, const char *p1 = NULL, const char *p2 = NULL);
+void verror(Loc loc, const char *format, va_list ap, const char *p1 = NULL, const char *p2 = NULL, const char *header = "Error: ");
 void vwarning(Loc loc, const char *format, va_list);
-void verrorSupplemental(Loc loc, const char *format, va_list);
+void verrorSupplemental(Loc loc, const char *format, va_list ap);
+void verrorPrint(Loc loc, const char *header, const char *format, va_list ap, const char *p1 = NULL, const char *p2 = NULL);
+void vdeprecation(Loc loc, const char *format, va_list ap, const char *p1 = NULL, const char *p2 = NULL);
 
 #if defined(__GNUC__) || defined(__clang__)
 __attribute__((noreturn))
@@ -527,7 +531,7 @@ void error(const char *format, ...)  IS_PRINTF(1);
 int runLINK();
 void deleteExeFile();
 int runProgram();
-const char *inifile(const char *argv0, const char *inifile);
+const char *inifile(const char *argv0, const char *inifile, const char* envsectionname);
 #endif
 void halt();
 #if !IN_LLVM
@@ -543,7 +547,7 @@ void util_progress();
 
 #if !IN_LLVM
 struct Dsymbol;
-struct Library;
+class Library;
 struct File;
 void obj_start(char *srcfile);
 void obj_end(Library *library, File *objfile);

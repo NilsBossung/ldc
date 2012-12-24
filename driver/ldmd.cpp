@@ -69,7 +69,7 @@ namespace ls = llvm::sys;
 
 // We reuse DMD's response file parsing routine for maximum compatibilty - it
 // handles quotes in a very peciuliar way.
-int response_expand(int *pargc, char ***pargv);
+int response_expand(size_t *pargc, char ***pargv);
 void browse(const char *url);
 
 /**
@@ -398,7 +398,7 @@ struct Params
 Params parseArgs(int originalArgc, char** originalArgv, ls::Path ldcPath)
 {
     // Expand any response files present into the list of arguments.
-    int argc = originalArgc;
+    size_t argc = originalArgc;
     char** argv = originalArgv;
     if (response_expand(&argc, &argv))
     {
